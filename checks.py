@@ -11,6 +11,14 @@ def number(text):
         raise argparse.ArgumentTypeError("Нужно число, например 2.5") from exc
     if not value.is_finite():
         raise argparse.ArgumentTypeError("Нужно конечное число")
+    if value.is_zero():
+        return Decimal(0)
+    if not -12 <= value.adjusted() < 13:
+        raise argparse.ArgumentTypeError(
+            "Слишком большое или маленькое число. Используйте 0 или модуль "
+            "от 1e-12 до 1e13, не включая 1e13")
+    if len(value.as_tuple().digits) > 50:
+        raise argparse.ArgumentTypeError("Допустимо не более 50 значащих цифр")
     return value
 
 

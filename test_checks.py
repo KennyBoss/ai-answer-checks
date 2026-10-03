@@ -1,4 +1,7 @@
 import argparse
+from pathlib import Path
+import subprocess
+import sys
 import unittest
 from decimal import Decimal as D
 
@@ -41,6 +44,24 @@ class ArithmeticChecks(unittest.TestCase):
 
     def test_nonfinite_and_nonnumber_cli_input(self):
         for text in ["NaN", "Infinity", "-Infinity", "hello"]:
+            with self.assertRaises(argparse.ArgumentTypeError):
+                number(text)
+
+    def test_extreme_cli_input_returns_short_error(self):
+        result = subprocess.run(
+            [sys.executable, str(Path(__file__).with_name("checks.py")),
+             "total", "1e999999", "1e999999", "--claimed", "1"],
+            text=True, capture_output=True, timeout=5)
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stdout, "")
+        self.assertLess(len(result.stderr), 600)
+        self.assertIn("Слишком большое или маленькое число", result.stderr)
+
+    def test_cli_range_boundaries_and_zero(self):
+        self.assertEqual(number("1e-12"), D("1e-12"))
+        self.assertEqual(number("-9999999999999"), D("-9999999999999"))
+        self.assertEqual(number("0e-999999"), D("0"))
+        for text in ["1e13", "1e-13", "1." + "2" * 50]:
             with self.assertRaises(argparse.ArgumentTypeError):
                 number(text)
 
