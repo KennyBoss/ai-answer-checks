@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Бесплатная проверка суммы из ответа ИИ: вставьте исходные числа и объявленный итог, чтобы увидеть точное расхождение.">
+  <title>Проверить сумму из ответа ИИ — Код прогресса</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #182633; background: #f3f5f2; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 28px 18px 40px; }
+    main { max-width: 700px; margin: auto; }
+    .brand { color: #345a42; font-size: 14px; font-weight: 700; letter-spacing: .07em; }
+    h1 { font-size: clamp(28px, 6vw, 42px); line-height: 1.15; margin: 14px 0 18px; }
+    p { line-height: 1.6; }
+    .intro { color: #465563; font-size: 18px; margin-bottom: 26px; }
+    form, .channel { background: #fff; border: 1px solid #d9e1d9; border-radius: 16px; padding: 24px; }
+    label { display: block; font-weight: 650; margin-bottom: 8px; }
+    input, textarea { width: 100%; border: 1px solid #7d8c84; border-radius: 8px; padding: 12px; font: inherit; font-size: 18px; background: white; color: inherit; }
+    textarea { resize: vertical; min-height: 130px; }
+    .hint { font-size: 14px; color: #4c5b66; margin: 7px 0 22px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0 0; }
+    button { border: 0; border-radius: 8px; padding: 13px 18px; font: inherit; font-weight: 650; cursor: pointer; }
+    button[type="submit"] { background: #23583b; color: white; }
+    button[type="button"] { background: #e9eeea; color: #243c2e; }
+    :focus-visible { outline: 3px solid #3978b3; outline-offset: 3px; }
+    #result { white-space: pre-line; line-height: 1.7; margin: 0; font-variant-numeric: tabular-nums; }
+    #result:not(:empty) { margin-top: 24px; padding: 16px; background: #edf5ef; border-radius: 8px; }
+    #result.error { background: #fff1e8; color: #7b3316; }
+    .channel { margin-top: 20px; }
+    .channel p { margin: 0 0 12px; }
+    a { color: #225c3a; text-underline-offset: 3px; }
+    .channel a { font-size: 18px; font-weight: 700; }
+    footer { margin-top: 24px; color: #52616b; font-size: 13px; line-height: 1.7; }
+    @media (max-width: 420px) { form, .channel { padding: 18px; } .actions button { width: 100%; } }
+  </style>
+</head>
+<body>
+<main>
+  <div class="brand">КОД ПРОГРЕССА · ПРОВЕРКА ОТВЕТОВ ИИ</div>
+  <h1>Верна ли сумма из ответа ИИ?</h1>
+  <p class="intro">Вставьте исходные числа и итог, который предложил ИИ. Проверка покажет сумму строк и точное расхождение. Числа обрабатываются в вашем браузере.</p>
+  <form id="sum-form">
+    <label for="items">Исходные числа — по одному на строку</label>
+    <textarea id="items" maxlength="3000" aria-describedby="items-hint" spellcheck="false">700
+800</textarea>
+    <p class="hint" id="items-hint">Можно разделять строки точкой с запятой. Десятичная часть — через запятую или точку: 12,50. Пример выше вымышленный.</p>
+    <label for="claimed">Итог из ответа ИИ</label>
+    <input id="claimed" type="text" inputmode="decimal" maxlength="30" value="1800" aria-describedby="range-hint" spellcheck="false">
+    <p class="hint" id="range-hint">До 100 строк. Каждое число по модулю меньше 10 трлн, до 12 знаков после запятой. Отрицательные поправки допустимы.</p>
+    <div class="actions">
+      <button type="submit">Проверить сумму</button>
+      <button type="button" id="clear">Очистить</button>
+    </div>
+    <p id="result" role="status" aria-live="polite"></p>
+  </form>
+  <p class="hint">Проверяется сложение введённых чисел. Правильность исходных данных и полноту списка нужно проверить отдельно.</p>
+  <section class="channel" aria-label="Материалы автора">
+    <p>Понятные разборы ИИ, готовые запросы и примеры проверки ответов — в Telegram «Код прогресса».</p>
+    <a href="https://t.me/kodprogressa_ai" target="_blank" rel="noopener noreferrer">Открыть канал →</a>
+  </section>
+  <footer><a href="https://github.com/KennyBoss/ai-answer-checks" target="_blank" rel="noopener noreferrer">Исходный Python-код и другие примеры</a><br>Код прогресса · MIT · Материал и код подготовлены с помощью ИИ. Здесь не вызывается модель ИИ.</footer>
+</main>
+<script>
+  'use strict';
+  const scale = 1000000000000n;
+  const items = document.getElementById('items');
+  const claimed = document.getElementById('claimed');
+  const result = document.getElementById('result');
+
+  function parseNumber(text) {
+    const cleaned = text.trim();
+    if (!/^[+-]?\d{1,13}(?:[.,]\d{1,12})?$/.test(cleaned)) {
+      throw new Error('Нужно обычное число без пробелов, например 12,50 или -2.5. Допустимо до 12 знаков после запятой.');
+    }
+    const negative = cleaned.startsWith('-');
+    const parts = cleaned.replace(/^[+-]/, '').replace(',', '.').split('.');
+    const value = BigInt(parts[0]) * scale + BigInt((parts[1] || '').padEnd(12, '0'));
+    return negative ? -value : value;
+  }
+
+  function showNumber(value) {
+    const negative = value < 0n;
+    const absolute = negative ? -value : value;
+    const whole = (absolute / scale).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    const fraction = (absolute % scale).toString().padStart(12, '0').replace(/0+$/, '');
+    return (negative ? '-' : '') + whole + (fraction ? ',' + fraction : '');
+  }
+
+  function checkSum(text, totalText) {
+    if (text.length > 3000 || totalText.length > 30) throw new Error('Слишком длинный ввод. Допустимо до 100 коротких строк.');
+    const lines = text.split(/[;\n]+/).map(line => line.trim()).filter(Boolean);
+    if (!lines.length || lines.length > 100) throw new Error('Введите от 1 до 100 чисел.');
+    const actual = lines.reduce((sum, line) => sum + parseNumber(line), 0n);
+    const total = parseNumber(totalText);
+    const difference = total - actual;
+    return {actual, total, difference, lines: lines.length};
+  }
+
+  document.getElementById('sum-form').addEventListener('submit', event => {
+    event.preventDefault();
+    result.classList.remove('error');
+    try {
+      const checked = checkSum(items.value, claimed.value);
+      result.textContent = (checked.difference === 0n ? 'Итог совпадает с суммой строк.' : 'Есть расхождение — проверьте итог.') +
+        '\nСтрок: ' + checked.lines + '\nСумма строк: ' + showNumber(checked.actual) +
+        '\nИтог из ответа: ' + showNumber(checked.total) +
+        '\nИтог минус сумма: ' + showNumber(checked.difference);
+    } catch (error) {
+      result.classList.add('error');
+      result.textContent = error.message;
+    }
+  });
+  document.getElementById('clear').addEventListener('click', () => {
+    items.value = '';
+    claimed.value = '';
+    result.textContent = '';
+    result.classList.remove('error');
+    items.focus();
+  });
+</script>
+</body>
+</html>
