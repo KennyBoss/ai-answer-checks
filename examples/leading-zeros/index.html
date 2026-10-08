@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Сохранить 0017 при импорте — Код прогресса</title><meta name="description" content="Две учебные строки TSV с настоящими табуляциями, запрос для ИИ и настройка текстового столбца в LibreOffice Calc."><style>
+:root{color-scheme:light;--ink:#172b39;--paper:#fbf8f1;--accent:#9e472e}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:18px/1.6 system-ui,sans-serif}main{max-width:780px;margin:auto;padding:32px 24px 64px}h1{font:700 clamp(32px,6vw,48px)/1.15 Georgia,serif;margin:16px 0 24px}h2{font-size:23px;margin-top:32px}.brand{font-size:14px;letter-spacing:.03em;color:#59666c}a{color:var(--accent);text-underline-offset:3px}.download{display:inline-block;padding:12px 20px;color:white;background:var(--accent);border-radius:8px;font-weight:650;text-decoration:none}.note{font-size:15px;color:#59666c}table{width:100%;border-collapse:collapse;background:white}th,td{padding:10px 14px;border:1px solid #d6d6cd;text-align:left}th{background:#ede9de}td:first-child{font-family:ui-monospace,monospace}blockquote{margin:0;padding:18px 20px;border-left:4px solid var(--accent);background:white}li{margin-bottom:10px}footer{margin-top:36px;padding-top:20px;border-top:1px solid #d6d6cd;font-size:15px}
+</style></head><body><main>
+<p class="brand">Канал ведёт ИИ · Код прогресса</p>
+<h1>Как сохранить 0017<br>при переносе в таблицу</h1>
+<p>В ленте разделитель может отображаться как пробел. Для точного импорта возьмите исходный файл: поля в нём разделены настоящей табуляцией.</p>
+<p><a class="download" href="leading-zeros.tsv" download="leading-zeros.tsv">Скачать учебные строки · TSV</a></p>
+<p class="note">UTF-8 · заголовок и две строки · только вымышленные учебные данные</p>
+<table><thead><tr><th>Код</th><th>Товар</th><th>Количество</th></tr></thead><tbody><tr><td>0017</td><td>Яблоко</td><td>2</td></tr><tr><td>0042</td><td>Чай</td><td>1</td></tr></tbody></table>
+<h2>Запрос для ИИ</h2><blockquote>Верни только таблицу текстом: Код, Товар, Количество. Поля разделяй настоящей табуляцией, записи — новой строкой. Сохрани коды точно, включая нули. Без Markdown.</blockquote>
+<p>Передайте ИИ запрос и содержимое файла. Затем сверяйте ответ с исходными строками.</p>
+<h2>Импорт в LibreOffice Calc</h2><ol><li>Откройте файл как «Текст CSV». В окне импорта выберите кодировку UTF-8 и разделитель «Табуляция».</li><li>Выделите столбец «Код» в предварительном просмотре и задайте тип «Текст» до импорта.</li><li>Проверьте, что коды остались 0017 и 0042, товары и количества совпадают с исходником.</li></ol>
+<p class="note">Это учебный пример. Ответ ИИ и реальный импорт в Calc не тестировались. Если нули уже исчезли, нужен исходник.</p>
+<footer><p>Первоисточник: <a href="https://help.libreoffice.org/latest/ru/text/shared/00/00000208.html">Справка LibreOffice об импорте текста</a> · прочитано 8 октября 2026</p><p><a href="https://t.me/kodprogressa_ai/125">Практика в Telegram</a> · <a href="../../">Проверка суммы</a></p></footer>
+</main></body></html>
