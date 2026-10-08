@@ -45,7 +45,8 @@
   <p class="intro">Вставьте исходные числа и итог, который предложил ИИ. Проверка покажет сумму строк и точное расхождение. Числа обрабатываются в вашем браузере.</p>
   <form id="sum-form">
     <label for="items">Исходные числа — по одному на строку</label>
-    <textarea id="items" maxlength="3000" aria-describedby="items-hint" spellcheck="false">700
+    <p class="hint" id="items-completeness"><strong>Все строки перенесены? Сверьте список с исходником.</strong></p>
+    <textarea id="items" maxlength="3000" aria-describedby="items-completeness items-hint" spellcheck="false">700
 800</textarea>
     <p class="hint" id="items-hint">Можно разделять строки точкой с запятой. Десятичная часть — через запятую или точку: 12,50. Пример выше вымышленный.</p>
     <label for="claimed">Итог из ответа ИИ</label>
